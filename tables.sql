@@ -1,12 +1,14 @@
 /******* Table creation *******/
 create table student (
     stu_name char(64) primary key,
-    stu_password char(64) not null
+    stu_password char(64) not null,
+    first_login boolean not null
 );
  
 create table instructor (
     inst_name char(64) primary key,
-    inst_password char(64) not null
+    inst_password char(64) not null,
+    first_login boolean not null
 );
  
 create table course (
