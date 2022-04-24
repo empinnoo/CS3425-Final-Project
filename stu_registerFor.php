@@ -7,6 +7,5 @@
             }
         </style>
         <h1>Courses</h1>
-        <h1>Survey Status</h1>
     </body>
 </html>

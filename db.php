@@ -8,16 +8,14 @@
     }
 
     /* Check if it's the user's first login by checking the database */
-    function isFirstLogin($username) {
-        $stu_first_login = "select first_login from student where stu_name = :userVal";
-        $inst_first_login = "select first_login from instructoe where inst_name = :userVal";
-        $isFirstLogin = True;
-
+    function isFirstLogin($username, $firstLoginQuery) {
         try {
             $dbh = connectDB();
-            $statement = $dbh->prepare("select first_login from :tableVal where stu_name = :userVal");
+            $statement = $dbh->prepare($firstLoginQuery);
             $statement->bindParam(":userVal", $username);
             $statement->execute();
+            $row = $statement->fetch();
+            return $row[0];
             $dbh = null;
         } catch(PDOException $e) {
             print "Error!" . $e->getMessage() . "<br/>";
@@ -27,18 +25,48 @@
 
     /* Connect to database to find login information */
     function authenticate($username, $password, $loginQuery) {
-        $password = sha1($_POST['testPassword']); // hashes using sha1 algorithm
+        $hashedPassword = sha1($password); // hashes using sha1 algorithm
         try {
             $dbh = connectDB();
             $statement = $dbh->prepare($loginQuery);
             $statement->bindParam(":userVal", $username);
-            $statement->bindParam(":passVal", $password);
+            $statement->bindParam(":passVal", $hashedPassword);
             $statement->execute();
+            $row = $statement->fetch();
+            return $row[0];
             $dbh = null;
         } catch(PDOException $e) {
             print "Error!" . $e->getMessage() . "<br/>";
             die();
         }
         
+    }
+
+    /* Connect to database to change login information */
+    function editAccount($username, $oldPassword, $newPassword, $editQuery) {
+        $oldHashedPassword = sha1($oldPassword);
+        $newHashedPassword = sha1($newPassword);
+        try {
+            $dbh = connectDB();
+            $statement = $dbh->prepare($editQuery);
+            $statement->bindParam(":userVal", $username);
+            $statement->bindParam(":oldPassVal", $oldHashedPassword);
+            $statement->bindParam(":newPassVal", $newHashedPassword);
+            $statement->execute();
+            $row = $statement->fetch();
+            return $row[0];
+            $dbh = null;
+        } catch(PDOException $e) {
+            print "Error!" . $e->getMessage() . "<br/>";
+            die();
+        }
+    }
+
+    function createMultipleChoice() {
+        
+    }
+
+    function createEssay() {
+
     }
 ?>

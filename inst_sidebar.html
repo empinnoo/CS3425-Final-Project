@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <style>
+            /* The sidebar menu */
+            .sidenav {
+                height: 100%; 
+                width: 200px; 
+                position: fixed; 
+                z-index: 1; 
+                top: 0; 
+                left: 0;
+                background-color: #111;
+                overflow-x: hidden; 
+                padding-top: 200px;
+            }
+
+            /* The navigation menu links */
+            .sidenav a {
+                padding: 10px 8px 6px 35px;
+                text-decoration: none;
+                font-size: 20px;
+                color: #818181;
+                display: block;
+            }
+
+            /* When you mouse over the navigation links, change their color */
+            .sidenav a:hover {
+                color: #f1f1f1;
+            }
+
+            /* Style page content */
+            .main {
+            margin-left: 200px; 
+                padding: 0px 10px;
+            }
+
+            /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+            @media screen and (max-height: 450px) {
+                .sidenav {padding-top: 15px;}
+                .sidenav a {font-size: 18px;}
+            } 
+        </style>
+        <!-- Side navigation -->
+        <div class="sidenav">
+            <a href="inst_courses.php">Courses</a>
+            <a href="inst_surveyResults.php">Survey Results</a>
+            <a href="login.php">Logout</a>
+        </div>
+    </body>
+</html>
