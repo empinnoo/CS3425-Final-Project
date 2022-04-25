@@ -61,25 +61,6 @@ function authenticateInst($user, $passwd) {
     }
 }
 
-    /* Connect to database to find login information */
-    //function authenticate($username, $password, $loginQuery) {
-    //    $hashedPassword = sha1($password); // hashes using sha1 algorithm
-    //    try {
-    //        $dbh = connectDB();
-    //        $statement = $dbh->prepare($loginQuery);
-    //        $statement->bindParam(":userVal", $username);
-    //        $statement->bindParam(":passVal", $hashedPassword);
-    //        $statement->execute();
-    //        $row = $statement->fetch();
-    //        return $row[0];
-    //        $dbh = null;
-    //    } catch(PDOException $e) {
-    //        print "Error!" . $e->getMessage() . "<br/>";
-    //        die();
-    //   }
-        
-    //}
-
     /* Connect to database to change login information */
     function editAccount($username, $oldPassword, $newPassword, $editQuery) {
         $oldHashedPassword = sha1($oldPassword);
