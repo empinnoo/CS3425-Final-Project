@@ -56,7 +56,7 @@
                             $COURSE_TITLES = array();
                             try {
                                 $dbh = connectDB();
-                                $statement = $dbh->query("select course.course_id, course.title from course left outer join takes on course.course_id = takes.course_id where stu_name = '$currentUser'");
+                                $statement = $dbh->query("select course.course_id, course.title from course left outer join takes on course.course_id = takes.course_id where stu_name = '$currentUser' and complete = 0");
                                 $statement->execute();
                                 $dbh = null;
                             } catch(PDOException $e) {
@@ -92,7 +92,7 @@
                             $COURSE_TITLES = array();
                             try {
                                 $dbh = connectDB();
-                                $statement = $dbh->query("select course.course_id, course.title from course left outer join takes on course.course_id = takes.course_id where stu_name = '$currentUser'");
+                                $statement = $dbh->query("select course.course_id, course.title from course left outer join takes on course.course_id = takes.course_id where stu_name = '$currentUser' and complete = 1");
                                 $statement->execute();
                                 $dbh = null;
                             } catch(PDOException $e) {
