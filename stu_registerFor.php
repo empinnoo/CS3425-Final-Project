@@ -24,7 +24,7 @@
                             $COURSE_CREDITS = array();
                             try {
                                 $dbh = connectDB();
-                                $statement = $dbh->query("select course_id, title, credit from course");
+                                $statement = $dbh->query("select course_id, title, credit from course where course_id NOT IN (select course_id from takes where stu_name = '$currentUser')");
                                 $statement->execute();
                                 $dbh = null;
                             } catch(PDOException $e) {
