@@ -33,18 +33,23 @@ create table mult_choice (
 create table takes (
     stu_name char(64) not null,
     course_id char(64) not null,
+	complete boolean not null,
     primary key (stu_name, course_id),
     FOREIGN KEY (stu_name) REFERENCES student(stu_name),
     FOREIGN KEY (course_id) REFERENCES course(course_id)
 );
  
-create table view (
+create table results (
     question_id int unsigned not null auto_increment,
+    stu_name char(64) not null,
+    course_id char(64) not null,
     date date,
     time time,
     a_text char(255) not null,
-    primary key (question_id),
-    FOREIGN KEY (question_id) REFERENCES survey(question_id)
+    primary key (question_id, stu_name, course_id),
+    FOREIGN KEY (question_id) REFERENCES survey(question_id),
+	FOREIGN KEY (stu_name) REFERENCES student(stu_name),
+    FOREIGN KEY (course_id) REFERENCES course(course_id)
 );
  
 create table teaches (
