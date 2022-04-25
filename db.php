@@ -109,23 +109,4 @@ function authenticateInst($user, $passwd) {
     function createEssay() {
         
     }
-
-    /* Fetch the current user's course */
-    $dbh = connectDB();
-    $statement = $dbh->query("select title from course where stu_name = "); //select user's information
-    $statement->bindParam(":userVal", $username);
-    $statement->execute();
-    $COURSES = array();
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-        $Courses[] = array('tagName' => $row['tag_name']);
-    }
-
-    /* Fetch the current user's course */
-    $dbh = connectDB();
-    $statement = $dbh->query("select title from course where stu_name = "); //select user's information
-    $statement->bindParam(":userVal", $username);
-    $statement->execute();
-    $COURSES = array();
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-        $Courses[] = array('tagName' => $row['tag_name']);
-    }
+?>
