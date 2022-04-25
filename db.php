@@ -23,24 +23,62 @@
         }
     }
 
-    /* Connect to database to find login information */
-    function authenticate($username, $password, $loginQuery) {
-        $hashedPassword = sha1($password); // hashes using sha1 algorithm
-        try {
-            $dbh = connectDB();
-            $statement = $dbh->prepare($loginQuery);
-            $statement->bindParam(":userVal", $username);
-            $statement->bindParam(":passVal", $hashedPassword);
-            $statement->execute();
-            $row = $statement->fetch();
-            return $row[0];
-            $dbh = null;
-        } catch(PDOException $e) {
-            print "Error!" . $e->getMessage() . "<br/>";
-            die();
-        }
-        
+// Returns the number of rows that match the given username and password. (authenticates the student)
+function authenticateStu($user, $passwd) {
+    try {
+        $dbh = connectDB();
+        $statement = $dbh->prepare("SELECT count(*) FROM student ".   
+                                   "where stu_name = :username and stu_password = sha2(:passwd,256) ");
+        $statement->bindParam(":username", $user);
+        $statement->bindParam(":passwd", $passwd);
+        $result = $statement->execute();
+        $row = $statement->fetch();
+        $dbh = null;
+
+        return $row[0];
+    }catch (PDOException $e) {
+        print "Error!" . $e->getMessage() . "<br/>";
+        die();
     }
+}
+
+// Returns the number of rows that match the given username and password. (authenticates the instructor)
+function authenticateInst($user, $passwd) {
+    try {
+        $dbh = connectDB();
+        $statement = $dbh->prepare("SELECT count(*) FROM instructor ".   
+                                       "where inst_name = :username and inst_password = sha2(:passwd,256) ");
+        $statement->bindParam(":username", $user);
+        $statement->bindParam(":passwd", $passwd);
+        $result = $statement->execute();
+        $row = $statement->fetch();
+        $dbh = null;
+    
+        return $row[0];
+    }catch (PDOException $e) {
+        print "Error!" . $e->getMessage() . "<br/>";
+        die();
+    }
+}
+
+    /* Connect to database to find login information */
+    //function authenticate($username, $password, $loginQuery) {
+    //    $hashedPassword = sha1($password); // hashes using sha1 algorithm
+    //    try {
+    //        $dbh = connectDB();
+    //        $statement = $dbh->prepare($loginQuery);
+    //        $statement->bindParam(":userVal", $username);
+    //        $statement->bindParam(":passVal", $hashedPassword);
+    //        $statement->execute();
+    //        $row = $statement->fetch();
+    //        return $row[0];
+    //        $dbh = null;
+    //    } catch(PDOException $e) {
+    //        print "Error!" . $e->getMessage() . "<br/>";
+    //        die();
+    //   }
+        
+    //}
 
     /* Connect to database to change login information */
     function editAccount($username, $oldPassword, $newPassword, $editQuery) {
@@ -81,4 +119,13 @@
     while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
         $Courses[] = array('tagName' => $row['tag_name']);
     }
-?>
+
+    /* Fetch the current user's course */
+    $dbh = connectDB();
+    $statement = $dbh->query("select title from course where stu_name = "); //select user's information
+    $statement->bindParam(":userVal", $username);
+    $statement->execute();
+    $COURSES = array();
+    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+        $Courses[] = array('tagName' => $row['tag_name']);
+    }
