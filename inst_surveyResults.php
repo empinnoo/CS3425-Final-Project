@@ -20,6 +20,8 @@ require "db.php";
                 <?php
                 /* Fetch the current user's courses */
                 $currentUser = $_SESSION["username"];
+                
+                // Query to get course id and title for each course an instructor teaches
                 try {
                     $dbh = connectDB();
                     $statement = $dbh->query("select course.course_id, course.title from course left outer join teaches on course.course_id = teaches.course_id where inst_name = '$currentUser'");
@@ -33,8 +35,11 @@ require "db.php";
                 while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                     $courseID = $row['course_id'];
                     $courseTitle = $row['title'];
-                    $q_type = $row['q_type'];
                 ?> <h3><?php echo $courseID ?> <?php echo $courseTitle ?></h3> <?php
+
+                    
+                
+                    $q_type = $row['q_type'];
                     responseRate($courseID);
                     $q_idCount++;
                     if (strcmp($q_type, 'Multiple Choice') == 0) {
