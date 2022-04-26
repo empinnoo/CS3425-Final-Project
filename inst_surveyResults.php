@@ -173,8 +173,12 @@ function essayResults($courseID, $q_id) {
     <tbody>
         <?php
         $responseRate = $_SESSION["responseRate"];
+<<<<<<< Updated upstream
         $atext = $result[2];
         $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$atext'";
+=======
+        $query = "select count(q_type) from survey left outer join results on survey.question_id = results.question_id where q_type = 'Essay' and survey.question_id = '$q_id' and results.course_id = '$courseID' and a_text is not null and a_text <> ''";
+>>>>>>> Stashed changes
         $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
 
         echo'<tr>';
@@ -189,7 +193,7 @@ function essayResults($courseID, $q_id) {
 // Query to get all the text answer from a specific question and course
 try {
         $dbh = connectDB();
-        $statement = $dbh->query("select results.a_text from survey left outer join results on survey.question_id = results.question_id where q_type = 'Essay' and survey.question_id = '$q_id' and course_id = '$courseID' and a_text is not null");
+        $statement = $dbh->query("select results.a_text from survey left outer join results on survey.question_id = results.question_id where q_type = 'Essay' and survey.question_id = '$q_id' and course_id = '$courseID' and a_text is not null and a_text <> ''");
         $statement->execute();
         $dbh = null;
     } catch (PDOException $e) {
