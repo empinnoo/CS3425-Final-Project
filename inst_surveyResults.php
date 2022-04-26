@@ -77,6 +77,7 @@ function responseRate($courseID)
         print "Error!" . $e->getMessage() . "<br/>";
         die();
     }
+    $_SESSION["responseRate"] = $completedStu;
 
     // Printing information for the response rate
     $percentage = floatval($completedStu[0]) / floatval($totalStu[0]) * 100;
@@ -85,26 +86,10 @@ function responseRate($courseID)
 
 // Function to print off the mutliple choice results
 function multChoiceResults($courseID, $q_id) {
-    $frequency = 0;
-    //frequency for each choice
-    try {
-        $dbh = connectDB();
-        $statement = $dbh->query("select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID'");
-        $statement->execute();
-        $frequency = $statement->fetch();
-        $dbh = null;
-    } catch (PDOException $e) {
-        print "Error!" . $e->getMessage() . "<br/>";
-        die();
-    }
-
-    //calculate percentage
-    $percent = 0;
-
             // Query to find multiple choice question and get information
             try {
                 $dbh = connectDB();
-                $statement = $dbh->query("select survey.question_id, survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice'");
+                $statement = $dbh->query("select survey.question_id, survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice' and question_id = '$q_id'");
                 $statement->execute();
                 $result = $statement->fetch();
                 $dbh = null;
@@ -112,10 +97,11 @@ function multChoiceResults($courseID, $q_id) {
                 print "Error!" . $e->getMessage() . "<br/>";
                 die();
             }
-
+            $choice = $result[2];
+            $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$choice'";
             ?>
 
-<p>Q<?php echo $q_id ?>: <?php echo $result[1] ?></p>
+            <p>Q<?php echo $q_id ?>: <?php echo $result[1] ?></p>
 
 
             <table>
@@ -126,12 +112,13 @@ function multChoiceResults($courseID, $q_id) {
             </tr>
             <tbody>
                 <?php
+                $responseRate = $_SESSION["responseRate"];
 
             while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                 echo'<tr>';
                 echo'<td>'.$row['choice'].'<td>';
-                echo'<td>'.$frequency[0].'<td>';
-                echo'<td>'.$percent.'<td>';
+                echo'<td>'.frequency($query).'<td>';
+                echo'<td>'.((frequency($query)/$responseRate) * 100).'<td>';
                 echo'<tr>';
             }
             ?>
@@ -141,22 +128,9 @@ function multChoiceResults($courseID, $q_id) {
 }
 
 function essayResults($courseID, $q_id) {
-    $frequency = 0;
-    //frequency of essay response
-    try {
-        $dbh = connectDB();
-        $statement = $dbh->query("select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID'");
-        $statement->execute();
-        $frequency = $statement->fetch();
-        $dbh = null;
-    } catch (PDOException $e) {
-        print "Error!" . $e->getMessage() . "<br/>";
-        die();
-    }
-
     //calculate percentage
     $percent = 0;
-
+    $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text is not null";
     ?>
     <table>
         <tr>
@@ -166,7 +140,7 @@ function essayResults($courseID, $q_id) {
         <tbody>
             <?php
                 echo'<tr>';
-                echo'<td>'.$frequency[0].'<td>';
+                echo'<td>'.frequency($query).'<td>';
                 echo'<td>'.$percent.'<td>';
                 echo'<tr>';
             ?>
@@ -196,6 +170,21 @@ function essayResults($courseID, $q_id) {
     </table>
 
     <?php
+}
+
+function frequency($query) {
+    //frequency of answer
+    try {
+        $dbh = connectDB();
+        $statement = $dbh->query($query);
+        $statement->execute();
+        $frequency = $statement->fetch();
+        $dbh = null;
+    } catch (PDOException $e) {
+        print "Error!" . $e->getMessage() . "<br/>";
+        die();
+    }
+    return $frequency[0];
 }
 
 ?>
