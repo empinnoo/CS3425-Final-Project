@@ -74,6 +74,7 @@ if (isset($_POST["markCompleted"])) {
 
 <?php
             header("Location: https://classdb.it.mtu.edu/~empinnoo/stu_registerFor.php");
+            $dbh = null;
         } else {
             //print error messages if query could not be performed
             print "The course was unable to be registered.  Please try again.";
