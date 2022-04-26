@@ -168,12 +168,11 @@ function essayResults($courseID, $q_id) {
     <tbody>
         <?php
         $responseRate = $_SESSION["responseRate"];
-        $atext = $result[2];
-        $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$atext'";
+        $query = "select count(q_type) from survey left outer join results on survey.question_id = results.question_id where q_type = 'Essay' and survey.question_id = '$q_id' and results.course_id = '$courseID' and a_text is not null";
         $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
 
         echo'<tr>';
-        echo'<td>'.frequency($query).'<td>';
+        echo'<td>'.frequency($query).' / '.$responseRate.'<td>';
         echo'<td>'.$percent.'%<td>';
         echo'<tr>';
     ?>
