@@ -92,7 +92,7 @@
                             $COURSE_TITLES = array();
                             try {
                                 $dbh = connectDB();
-                                $statement = $dbh->query("select course.course_id, course.title, results.timestamp from course left outer join takes on course.course_id = takes.course_id left outer join results on results.course_id = takes.course_id where takes.stu_name = '$currentUser' and complete = 1 and results.question_id = 1");
+                                $statement = $dbh->query("select distinct course.course_id, course.title, results.timestamp from results left outer join takes on results.course_id = takes.course_id left outer join course on takes.course_id = course.course_id where results.stu_name = '$currentUser' and complete = 1 and results.question_id = 1");
                                 $statement->execute();
                                 $dbh = null;
                             } catch(PDOException $e) {

@@ -165,21 +165,10 @@ function essayResults($courseID, $q_id) {
         <td>Percent</td>
     </tr>
 
-    <?php
-    $responseRate = $_SESSION["responseRate"];
-    $atext = $result[2];
-    $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$atext'";
-    $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
-
-        echo'<tr>';
-        echo'<td>'.frequency($query).'<td>';
-        echo'<td>'.$percent.'%<td>';
-        echo'<tr>';
-    ?>
-
-
     <tbody>
         <?php
+        $responseRate = $_SESSION["responseRate"];
+        $atext = $result[2];
         $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$atext'";
         $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
 
