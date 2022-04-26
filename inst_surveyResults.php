@@ -22,21 +22,26 @@ require "db.php";
                 $currentUser = $_SESSION["username"];
                 try {
                     $dbh = connectDB();
-                    $statement = $dbh->query("select course.course_id, course.title from course left outer join teaches on course.course_id = teaches.course_id where inst_name = '$currentUser'");
+                    $statement = $dbh->query("select course.course_id, course.title, survey.q_type from course left outer join teaches on course.course_id = teaches.course_id left outer join results on teaches.course_id = results.course_id left outer join survey on results.question_id = survey.question_id where inst_name = '$currentUser'");
                     $statement->execute();
                     $dbh = null;
                 } catch (PDOException $e) {
                     print "Error!" . $e->getMessage() . "<br/>";
                     die();
                 }
+                $q_idCount = 0;
                 while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                     $courseID = $row['course_id'];
                     $courseTitle = $row['title'];
+                    $q_type = $row['q_type'];
                 ?> <h3><?php echo $courseID ?> <?php echo $courseTitle ?></h3> <?php
                     responseRate($courseID);
-                    multChoiceResults($courseID, '1');
-                    multChoiceResults($courseID, '2');
-                    essayResults($courseID, '3');
+                    $count++;
+                    if (strcmp($q_type, 'Multiple Choice') == 0) {
+                        multChoiceResults($courseID, $q_idCount);
+                    } else {
+                        essayResults($courseID, $q_idCount);
+                    }
                 }
                 ?>
             </tbody>
@@ -168,11 +173,12 @@ function essayResults($courseID, $q_id) {
     <tbody>
         <?php
         $responseRate = $_SESSION["responseRate"];
-        $query = "select count(q_type) from survey left outer join results on survey.question_id = results.question_id where q_type = 'Essay' and survey.question_id = '$q_id' and results.course_id = '$courseID' and a_text is not null";
+        $atext = $result[2];
+        $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$atext'";
         $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
 
         echo'<tr>';
-        echo'<td>'.frequency($query).' / '.$responseRate.'<td>';
+        echo'<td>'.frequency($query).'<td>';
         echo'<td>'.$percent.'%<td>';
         echo'<tr>';
     ?>
