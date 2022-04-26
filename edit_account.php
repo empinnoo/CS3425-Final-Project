@@ -62,7 +62,7 @@ if (isset($_POST['edit']) && isset($_POST['username']) && isset($_POST['oldPassw
             $step->bindParam(':newPassword', $newPassword);
 
             if ($step->execute()) {
-                //if successful, shows popup and redirects to index.php
+                //if successful, shows popup and redirects to login.php
             ?>
                 <script>
                     alert("New password has been set successfully!")
