@@ -83,12 +83,83 @@ function responseRate($courseID)
 
 // Function to print off the mutliple choice results
 function multChoiceResults($courseID) {
-    // Query to find multiple choice question and get information
+    //frequency for each choice
     try {
         $dbh = connectDB();
-        $statement = $dbh->query("select survey.question_id, survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice'");
+        $statement = $dbh->query("select count(a_text) from results where question_id = and course_id = '$courseID', survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice'");
         $statement->execute();
-        $statement->fetch();
+        $dbh = null;
+    } catch (PDOException $e) {
+        print "Error!" . $e->getMessage() . "<br/>";
+        die();
+    }
+
+
+    ?>
+    <table>
+        <tr>
+            <td>Response Option</td>
+            <td>Frequency</td>
+            <td>Percent</td>
+        </tr>
+        <tbody>
+            <?php
+            // Query to find multiple choice question and get information
+            try {
+                $dbh = connectDB();
+                $statement = $dbh->query("select survey.question_id, survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice'");
+                $statement->execute();
+                $dbh = null;
+            } catch (PDOException $e) {
+                print "Error!" . $e->getMessage() . "<br/>";
+                die();
+            }
+            while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+                echo'<tr>';
+                echo'<td>'.$row['question_text'].'<td>';
+                echo'<td>'.$row['question_id'].'<td>';
+                echo'<td>'.$row['question_id'].'<td>';
+                echo'<tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+    <?php
+}
+
+function essayResults($courseID) {
+    ?>
+    <table>
+        <tr>
+            <td>Frequency</td>
+            <td>Percent</td>
+        </tr>
+        <tbody>
+            <?php
+            // Query to find multiple choice question and get information
+            try {
+                $dbh = connectDB();
+                $statement = $dbh->query("select question_id, q_text from survey where q_type = 'Essay'");
+                $statement->execute();
+                $dbh = null;
+            } catch (PDOException $e) {
+                print "Error!" . $e->getMessage() . "<br/>";
+                die();
+            }
+            while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+                echo'<tr>';
+                echo'<td>'.$row['question_text'].'<td>';
+                echo'<td>'.$row['question_id'].'<td>';
+                echo'<tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+    <?php
+    try {
+        $dbh = connectDB();
+        $statement = $dbh->query("select count(a_text) from results where question_id = and course_id = '$courseID'");
+        $statement->execute();
         $dbh = null;
     } catch (PDOException $e) {
         print "Error!" . $e->getMessage() . "<br/>";
