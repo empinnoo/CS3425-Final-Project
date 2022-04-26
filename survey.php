@@ -6,9 +6,7 @@
     <body>
         <form method=post>
             <?php
-                if (isset($_POST["todo"])) {
                     $currentUser = $_SESSION["username"];
-                    $courseID = $_POST['courseID'];
 
                     $query = "select * from survey";
                     try {
@@ -30,7 +28,6 @@
                             createEssay($q_id, $q_text);
                         }
                     }
-                }
 
                 /* Creates the multiple choice questions for the survey */
                 function createMultipleChoice($q_id, $q_text) {
@@ -48,10 +45,12 @@
                     <p>Q<?php echo $q_id ?>: <?php echo $q_text ?></p>
                     <?php
 
+                    $count = 0;
                     while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+                        $count++;
                         $choice = $row['choice'];
                         ?>
-                        <input type="radio" value="<?php $choice ?>" name="<?php $q_id ?>"><?php $choice ?></input>
+                        <input type="radio" value="<?php echo $choice ?>" name="<?php echo $q_id ?>"><?php echo $choice ?></input><br>
                         <?php
                     }
                 }
@@ -62,11 +61,23 @@
                     <p>Q<?php echo $q_id ?>: <?php echo $q_text ?></p>
                     <?php
                     ?>
-                    <input type="text" name="<?php $q_id ?>">
+                    <input type="text" name="<?php echo $q_id ?>"><br>
                     <?php
                 }
             ?>
-            <button type="submit" name="submitSurvey">Submit</button>
+            <br><button type="submit" name="submitSurvey">Submit</button>
         </form>
     </body>
 </html>
+
+<?php
+
+if(isset($_POST['submitSurvey'])){
+    echo 'Your answers are:<br>';
+    echo "1:". $_POST["1"];
+    echo '<br>';
+    echo "2:". $_POST["2"];
+    echo '<br>';
+}
+
+?>

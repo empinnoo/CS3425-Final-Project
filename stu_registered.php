@@ -71,7 +71,7 @@
                                 echo'<tr>';
                                 echo'<td>'.$COURSES['CourseID'].'<td>';
                                 echo'<td>'.$COURSE_TITLES['CourseTitle'].'<td>';
-                                echo '<td><input type="submit" value="TO-DO" class="todo-btn" name = "markCompleted" /><td>';
+                                echo '<td><input type="submit" value="TO-DO" class="todo-btn" name = "todo" /><td>';
                                 echo'<tr>';
                             }, $COURSES, $COURSE_TITLES);
                         ?>
