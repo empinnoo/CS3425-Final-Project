@@ -22,7 +22,7 @@ require "db.php";
                 $currentUser = $_SESSION["username"];
                 try {
                     $dbh = connectDB();
-                    $statement = $dbh->query("select course.course_id, course.title, survey.q_type from course left outer join teaches on course.course_id = teaches.course_id left outer join results on teaches.course_id = results.course_id left outer join survey on results.question_id = survey.question_id where inst_name = '$currentUser'");
+                    $statement = $dbh->query("select course.course_id, course.title from course left outer join teaches on course.course_id = teaches.course_id where inst_name = '$currentUser'");
                     $statement->execute();
                     $dbh = null;
                 } catch (PDOException $e) {
@@ -36,7 +36,7 @@ require "db.php";
                     $q_type = $row['q_type'];
                 ?> <h3><?php echo $courseID ?> <?php echo $courseTitle ?></h3> <?php
                     responseRate($courseID);
-                    $count++;
+                    $q_idCount++;
                     if (strcmp($q_type, 'Multiple Choice') == 0) {
                         multChoiceResults($courseID, $q_idCount);
                     } else {
