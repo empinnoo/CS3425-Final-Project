@@ -8,7 +8,7 @@ require "db.php";
     <form method=post>
         <?php
         $currentUser = $_SESSION["username"];
-        $course_id = $_SESSION['courseID'];
+        $course_id = $_SESSION["courseID"];
 
         $query = "select * from survey";
         try {

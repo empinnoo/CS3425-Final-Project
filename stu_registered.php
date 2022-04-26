@@ -71,8 +71,7 @@
                                 echo'<tr>';
                                 echo'<td>'.$COURSES['CourseID'].'<td>';
                                 echo'<td>'.$COURSE_TITLES['CourseTitle'].'<td>';
-                                echo '<td><input type="submit" value="TO-DO" class="todo-btn" name = "todo" /><td>';
-                                echo '<td><input type="hidden" value=' . $COURSES['CourseID'] . ' name="courseID" /><td>';
+                                echo'<td><button value=' . $COURSES['CourseID'] . ' name="todo" />TO-DO</button><td>';
                                 echo'<tr>';
                             }, $COURSES, $COURSE_TITLES);
                         ?>
@@ -119,7 +118,7 @@
 </html>
 <?php
     if (isset($_POST["todo"])) {
-        $_SESSION["courseID"] = $_POST["courseID"];
+        $_SESSION["courseID"] = $_POST["todo"];
         header("Location: https://classdb.it.mtu.edu/~empinnoo/survey.php");
     }
 ?>
