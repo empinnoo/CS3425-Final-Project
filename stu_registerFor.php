@@ -42,8 +42,7 @@ require "db.php";
                         echo '<td>' . $COURSES['CourseID'] . '<td>';
                         echo '<td>' . $COURSE_TITLES['CourseTitle'] . '<td>';
                         echo '<td>' . $COURSE_CREDITS['CourseCredit'] . '<td>';
-                        echo '<td><input type="submit" value="Register" class="register-btn" name="markCompleted" /><td>';
-                        echo '<td><input type="hidden" value=' . $COURSES['CourseID'] . ' name="courseID" /><td>';
+                        echo '<td><button value=' . $COURSES['CourseID'] . ' name="markCompleted" />Register</button><td>';
                         echo '<tr>';
                     }, $COURSES, $COURSE_TITLES, $COURSE_CREDITS);
                     ?>
@@ -57,7 +56,7 @@ require "db.php";
 <?php
 // User clicked the register button
 if (isset($_POST["markCompleted"])) {
-    $courseID = $_POST['courseID'];
+    $courseID = $_POST['markCompleted'];
     $query = "Insert into takes values('$currentUser','$courseID',0)"; //query to update password
 
     try {
