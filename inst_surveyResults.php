@@ -33,7 +33,8 @@ require "db.php";
                     $courseID = $row['course_id'];
                     $courseTitle = $row['title'];
                 ?> <h3><?php echo $courseID ?> <?php echo $courseTitle ?></h3> <?php
-                    printResults($courseID);
+                    responseRate($courseID);
+                    multChoiceResults($courseID);
                 }
                 ?>
             </tbody>
@@ -44,20 +45,55 @@ require "db.php";
 </html>
 
 <?php
-function printResults($courseID)
+
+// Function to print off the response rate for the results
+function responseRate($courseID)
 {
+    $totalStu = 0.0;
+    $completedStu = 0.0;
+
+    // Query to get total count of students in a given class
     try {
         $dbh = connectDB();
-        $statement = $dbh->query("select stu_name from takes where course_id = '$courseID'");
+        $statement = $dbh->query("select count(stu_name) from takes where course_id = '$courseID'");
         $statement->execute();
+        $totalStu = $statement->fetch();
         $dbh = null;
     } catch (PDOException $e) {
         print "Error!" . $e->getMessage() . "<br/>";
         die();
     }
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-        $student = $row['stu_name'];
-?> <?php echo $student ?> <br> <?php
+
+    // Query to get total count of students who completed survey for a given class
+    try {
+        $dbh = connectDB();
+        $statement = $dbh->query("select count(stu_name) from takes where course_id = '$courseID' and complete = 1");
+        $statement->execute();
+        $completedStu = $statement->fetch();
+        $dbh = null;
+    } catch (PDOException $e) {
+        print "Error!" . $e->getMessage() . "<br/>";
+        die();
+    }
+
+    // Printing information for the response rate
+    $percentage = floatval($completedStu[0]) / floatval($totalStu[0]) * 100;
+?> Response Rate: <?php echo $completedStu[0] ?> / <?php echo $totalStu[0] ?>  (<?php echo $percentage ?>%)<br> <?php
+}
+
+// Function to print off the mutliple choice results
+function multChoiceResults($courseID) {
+    // Query to find multiple choice question and get information
+    try {
+        $dbh = connectDB();
+        $statement = $dbh->query("select survey.question_id, survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice'");
+        $statement->execute();
+        $statement->fetch();
+        $dbh = null;
+    } catch (PDOException $e) {
+        print "Error!" . $e->getMessage() . "<br/>";
+        die();
     }
 }
+
 ?>
