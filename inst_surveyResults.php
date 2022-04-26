@@ -14,11 +14,11 @@ require "db.php";
         }
     </style>
     <h1>Courses</h1>
-    <div class="currentCourses">
+    <div class="surveyResults">
         <table>
             <tbody>
                 <?php
-                /* Fetch the current user's course */
+                /* Fetch the current user's courses */
                 $currentUser = $_SESSION["username"];
                 try {
                     $dbh = connectDB();
@@ -34,7 +34,9 @@ require "db.php";
                     $courseTitle = $row['title'];
                 ?> <h3><?php echo $courseID ?> <?php echo $courseTitle ?></h3> <?php
                     responseRate($courseID);
-                    multChoiceResults($courseID);
+                    multChoiceResults($courseID, '1');
+                    multChoiceResults($courseID, '2');
+                    essayResults($courseID, '3');
                 }
                 ?>
             </tbody>
@@ -82,18 +84,22 @@ function responseRate($courseID)
 }
 
 // Function to print off the mutliple choice results
-function multChoiceResults($courseID) {
+function multChoiceResults($courseID, $q_id) {
+    $frequency = 0;
     //frequency for each choice
     try {
         $dbh = connectDB();
-        $statement = $dbh->query("select count(a_text) from results where question_id = and course_id = '$courseID', survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice'");
+        $statement = $dbh->query("select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID'");
         $statement->execute();
+        $frequency = $statement->fetch();
         $dbh = null;
     } catch (PDOException $e) {
         print "Error!" . $e->getMessage() . "<br/>";
         die();
     }
 
+    //calculate percentage
+    $percent = 0;
 
     ?>
     <table>
@@ -117,8 +123,8 @@ function multChoiceResults($courseID) {
             while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                 echo'<tr>';
                 echo'<td>'.$row['question_text'].'<td>';
-                echo'<td>'.$row['question_id'].'<td>';
-                echo'<td>'.$row['question_id'].'<td>';
+                echo'<td>'.$frequency.'<td>';
+                echo'<td>'.$percent.'<td>';
                 echo'<tr>';
             }
             ?>
@@ -127,13 +133,40 @@ function multChoiceResults($courseID) {
     <?php
 }
 
-function essayResults($courseID) {
+function essayResults($courseID, $q_id) {
+    $frequency = 0;
+    //frequency of essay response
+    try {
+        $dbh = connectDB();
+        $statement = $dbh->query("select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID'");
+        $statement->execute();
+        $frequency = $statement->fetch();
+        $dbh = null;
+    } catch (PDOException $e) {
+        print "Error!" . $e->getMessage() . "<br/>";
+        die();
+    }
+
+    //calculate percentage
+    $percent = 0;
+
     ?>
     <table>
         <tr>
             <td>Frequency</td>
             <td>Percent</td>
         </tr>
+        <tbody>
+            <?php
+                echo'<tr>';
+                echo'<td>'.$frequency.'<td>';
+                echo'<td>'.$percent.'<td>';
+                echo'<tr>';
+            ?>
+        </tbody>
+    </table>
+
+    <table>
         <tbody>
             <?php
             // Query to find multiple choice question and get information
@@ -149,22 +182,13 @@ function essayResults($courseID) {
             while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                 echo'<tr>';
                 echo'<td>'.$row['question_text'].'<td>';
-                echo'<td>'.$row['question_id'].'<td>';
                 echo'<tr>';
             }
             ?>
         </tbody>
     </table>
+
     <?php
-    try {
-        $dbh = connectDB();
-        $statement = $dbh->query("select count(a_text) from results where question_id = and course_id = '$courseID'");
-        $statement->execute();
-        $dbh = null;
-    } catch (PDOException $e) {
-        print "Error!" . $e->getMessage() . "<br/>";
-        die();
-    }
 }
 
 ?>
