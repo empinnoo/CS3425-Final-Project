@@ -116,3 +116,8 @@
         </div>
     </body>
 </html>
+<?php
+    if (isset($_POST["todo"])) {
+        header("Location: https://classdb.it.mtu.edu/~empinnoo/survey.php");
+    }
+?>

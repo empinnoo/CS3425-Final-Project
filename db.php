@@ -80,14 +80,4 @@ function authenticateInst($user, $passwd) {
             die();
         }
     }
-
-    /* Creates the multiple choice questions for the survey */
-    function createMultipleChoice() {
-
-    }
-
-    /* Creates the essay questions for the survey */
-    function createEssay() {
-        
-    }
 ?>
