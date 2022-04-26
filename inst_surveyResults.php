@@ -89,7 +89,7 @@ function multChoiceResults($courseID, $q_id) {
             // Query to find multiple choice question and get information
             try {
                 $dbh = connectDB();
-                $statement = $dbh->query("select survey.question_id, survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice' and question_id = '$q_id'");
+                $statement = $dbh->query("select survey.question_id, survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice' and survey.question_id = '$q_id'");
                 $statement->execute();
                 $result = $statement->fetch();
                 $dbh = null;
@@ -118,7 +118,8 @@ function multChoiceResults($courseID, $q_id) {
                 echo'<tr>';
                 echo'<td>'.$row['choice'].'<td>';
                 echo'<td>'.frequency($query).'<td>';
-                echo'<td>'.((frequency($query)/$responseRate) * 100).'<td>';
+                $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
+                echo'<td>'.$percent.'<td>';
                 echo'<tr>';
             }
             ?>
