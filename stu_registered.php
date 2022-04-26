@@ -92,7 +92,7 @@
                             $COURSE_TITLES = array();
                             try {
                                 $dbh = connectDB();
-                                $statement = $dbh->query("select course.course_id, course.title from course left outer join takes on course.course_id = takes.course_id where stu_name = '$currentUser' and complete = 1");
+                                $statement = $dbh->query("select course.course_id, course.title, results.timestamp from course inner join takes on course.course_id = takes.course_id inner join results on results.course_id = takes.course_id where stu_name = '$currentUser' and complete = 1");
                                 $statement->execute();
                                 $dbh = null;
                             } catch(PDOException $e) {
@@ -102,11 +102,13 @@
                             while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                                 $COURSES[] = array('CourseID' => $row['course_id']);
                                 $COURSE_TITLES[] = array('CourseTitle' => $row['title']);
+                                $timestamp = $row['timestamp'];
                             }
-                            array_map(function($COURSES, $COURSE_TITLES) {
+                            array_map(function($COURSES, $COURSE_TITLES, $timestamp) {
                                 echo'<tr>';
                                 echo'<td>'.$COURSES['CourseID'].'<td>';
                                 echo'<td>'.$COURSE_TITLES['CourseTitle'].'<td>';
+                                echo'<td>'.$timestamp.'<td>';
                                 echo'<tr>';
                             }, $COURSES, $COURSE_TITLES);
                         ?>
