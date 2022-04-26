@@ -80,7 +80,7 @@ function responseRate($courseID)
 
     // Printing information for the response rate
     $percentage = floatval($completedStu[0]) / floatval($totalStu[0]) * 100;
-?> Response Rate: <?php echo $completedStu[0] ?> / <?php echo $totalStu[0] ?>  (<?php echo $percentage ?>%)<br> <?php
+?> Response Rate: <?php echo $completedStu[0] ?> / <?php echo $totalStu[0] ?>  (<?php echo $percentage ?>%)<br><br> <?php
 }
 
 // Function to print off the mutliple choice results
@@ -101,29 +101,36 @@ function multChoiceResults($courseID, $q_id) {
     //calculate percentage
     $percent = 0;
 
-    ?>
-    <table>
-        <tr>
-            <td>Response Option</td>
-            <td>Frequency</td>
-            <td>Percent</td>
-        </tr>
-        <tbody>
-            <?php
             // Query to find multiple choice question and get information
             try {
                 $dbh = connectDB();
                 $statement = $dbh->query("select survey.question_id, survey.q_text, mult_choice.choice from survey left outer join mult_choice on survey.question_id = mult_choice.question_id where q_type = 'Multiple Choice'");
                 $statement->execute();
+                $result = $statement->fetch();
                 $dbh = null;
             } catch (PDOException $e) {
                 print "Error!" . $e->getMessage() . "<br/>";
                 die();
             }
+
+            ?>
+
+<p>Q<?php echo $q_id ?>: <?php echo $result[1] ?></p>
+
+
+            <table>
+            <tr>
+                <td>Response Option</td>
+                <td>Frequency</td>
+                <td>Percent</td>
+            </tr>
+            <tbody>
+                <?php
+
             while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                 echo'<tr>';
-                echo'<td>'.$row['question_text'].'<td>';
-                echo'<td>'.$frequency.'<td>';
+                echo'<td>'.$row['choice'].'<td>';
+                echo'<td>'.$frequency[0].'<td>';
                 echo'<td>'.$percent.'<td>';
                 echo'<tr>';
             }
@@ -159,7 +166,7 @@ function essayResults($courseID, $q_id) {
         <tbody>
             <?php
                 echo'<tr>';
-                echo'<td>'.$frequency.'<td>';
+                echo'<td>'.$frequency[0].'<td>';
                 echo'<td>'.$percent.'<td>';
                 echo'<tr>';
             ?>
@@ -181,7 +188,7 @@ function essayResults($courseID, $q_id) {
             }
             while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                 echo'<tr>';
-                echo'<td>'.$row['question_text'].'<td>';
+                echo'<td>'.$row['q_text'].'<td>';
                 echo'<tr>';
             }
             ?>
