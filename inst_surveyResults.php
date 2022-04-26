@@ -77,7 +77,7 @@ function responseRate($courseID)
         print "Error!" . $e->getMessage() . "<br/>";
         die();
     }
-    $_SESSION["responseRate"] = $completedStu;
+    $_SESSION["responseRate"] = $completedStu[0];
 
     // Printing information for the response rate
     $percentage = floatval($completedStu[0]) / floatval($totalStu[0]) * 100;
@@ -97,8 +97,6 @@ function multChoiceResults($courseID, $q_id) {
                 print "Error!" . $e->getMessage() . "<br/>";
                 die();
             }
-            $choice = $result[2];
-            $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$choice'";
             ?>
 
             <p>Q<?php echo $q_id ?>: <?php echo $result[1] ?></p>
@@ -110,16 +108,32 @@ function multChoiceResults($courseID, $q_id) {
                 <td>Frequency</td>
                 <td>Percent</td>
             </tr>
+
+            <?php
+            $responseRate = $_SESSION["responseRate"];
+            $choice = $result[2];
+            $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$choice'";
+                $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
+
+                echo'<tr>';
+                echo'<td>'.$result[2].'<td>';
+                echo'<td>'.frequency($query).'<td>';
+                echo'<td>'.$percent.'%<td>';
+                echo'<tr>';
+            ?>
+
+
             <tbody>
                 <?php
-                $responseRate = $_SESSION["responseRate"];
-
             while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+                $choice = $row['choice'];
+                $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$choice'";
+                $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
+
                 echo'<tr>';
                 echo'<td>'.$row['choice'].'<td>';
                 echo'<td>'.frequency($query).'<td>';
-                $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
-                echo'<td>'.$percent.'<td>';
+                echo'<td>'.$percent.'%<td>';
                 echo'<tr>';
             }
             ?>
@@ -129,48 +143,81 @@ function multChoiceResults($courseID, $q_id) {
 }
 
 function essayResults($courseID, $q_id) {
-    //calculate percentage
-    $percent = 0;
-    $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text is not null";
+    // Query to find essay question and get information
+    try {
+        $dbh = connectDB();
+        $statement = $dbh->query("select survey.question_id, survey.q_text, results.a_text from survey left outer join results on survey.question_id = results.question_id where q_type = 'Essay' and survey.question_id = '$q_id' and a_text is not null");
+        $statement->execute();
+        $result = $statement->fetch();
+        $dbh = null;
+    } catch (PDOException $e) {
+        print "Error!" . $e->getMessage() . "<br/>";
+        die();
+    }
     ?>
-    <table>
-        <tr>
-            <td>Frequency</td>
-            <td>Percent</td>
-        </tr>
-        <tbody>
-            <?php
-                echo'<tr>';
-                echo'<td>'.frequency($query).'<td>';
-                echo'<td>'.$percent.'<td>';
-                echo'<tr>';
-            ?>
-        </tbody>
-    </table>
 
+    <p>Q<?php echo $q_id ?>: <?php echo $result[1] ?></p>
+
+    <!-- Table for the frequency and percent info -->
     <table>
-        <tbody>
-            <?php
-            // Query to find multiple choice question and get information
-            try {
-                $dbh = connectDB();
-                $statement = $dbh->query("select question_id, q_text from survey where q_type = 'Essay'");
-                $statement->execute();
-                $dbh = null;
-            } catch (PDOException $e) {
-                print "Error!" . $e->getMessage() . "<br/>";
-                die();
-            }
-            while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-                echo'<tr>';
-                echo'<td>'.$row['q_text'].'<td>';
-                echo'<tr>';
-            }
-            ?>
-        </tbody>
-    </table>
+    <tr>
+        <td>Frequency</td>
+        <td>Percent</td>
+    </tr>
 
     <?php
+    $responseRate = $_SESSION["responseRate"];
+    $atext = $result[2];
+    $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$atext'";
+    $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
+
+        echo'<tr>';
+        echo'<td>'.frequency($query).'<td>';
+        echo'<td>'.$percent.'%<td>';
+        echo'<tr>';
+    ?>
+
+
+    <tbody>
+        <?php
+        $query = "select count(a_text) from results where question_id = '$q_id' and course_id = '$courseID' and a_text = '$atext'";
+        $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
+
+        echo'<tr>';
+        echo'<td>'.frequency($query).'<td>';
+        echo'<td>'.$percent.'%<td>';
+        echo'<tr>';
+    ?>
+</tbody>
+</table>
+
+<?php
+// Query to get all the text answer from a specific question and course
+try {
+        $dbh = connectDB();
+        $statement = $dbh->query("select results.a_text from survey left outer join results on survey.question_id = results.question_id where q_type = 'Essay' and survey.question_id = '$q_id' and course_id = '$courseID' and a_text is not null");
+        $statement->execute();
+        $dbh = null;
+    } catch (PDOException $e) {
+        print "Error!" . $e->getMessage() . "<br/>";
+        die();
+    } 
+    ?>
+
+<!-- Table for the a_text info -->
+<table>
+    <tbody>
+        <?php
+    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+        echo'<tr>';
+        echo'<td>. '.$row['a_text'].'<td>';
+        echo'<tr>';
+    }
+    ?>
+</tbody>
+</table>
+
+<?php
 }
 
 function frequency($query) {
