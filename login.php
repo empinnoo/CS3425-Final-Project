@@ -6,9 +6,15 @@ session_start();
 <head>
 
 <body>
+    <style>
+        body {
+            margin: auto;
+        }
+    </style>
     <p>
         <!-- action of login button -->
     <form method=post action=login.php>
+        <h1>School Survey Login</h1>
         username: <input type="text" name="username"></input><br>
         password: <input type="password" name="password"></input><br>
         <button type="submit" name="login">login</button>

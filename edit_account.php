@@ -5,6 +5,11 @@ require "db.php";
 <html>
 
 <body>
+    <style>
+        body {
+            margin: auto;
+        }
+    </style>
     <form method=post>
         <div class="username"><input type="text" placeholder="Username" name="username"></div>
         <div class="password"><input type="password" placeholder="Old Password" name="oldPassword"></div>
