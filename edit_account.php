@@ -10,6 +10,7 @@ require "db.php";
             margin: auto;
         }
     </style>
+    <h1>Edit Account</h1>
     <form method=post>
         <div class="username"><input type="text" placeholder="Username" name="username"></div>
         <div class="password"><input type="password" placeholder="Old Password" name="oldPassword"></div>
