@@ -32,21 +32,36 @@ require "db.php";
                     die();
                 }
                 $q_idCount = 0;
+
                 while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                     $courseID = $row['course_id'];
                     $courseTitle = $row['title'];
                 ?> <h3><?php echo $courseID ?> <?php echo $courseTitle ?></h3> <?php
 
-                    
-                
-                    $q_type = $row['q_type'];
-                    responseRate($courseID);
-                    $q_idCount++;
-                    if (strcmp($q_type, 'Multiple Choice') == 0) {
-                        multChoiceResults($courseID, $q_idCount);
-                    } else {
-                        essayResults($courseID, $q_idCount);
+                    // query to get the question type
+                    try {
+                        $db = connectDB();
+                        $statemt = $db->query("select q_type from survey");
+                        $statemt->execute();
+                        $db = null;
+                    } catch (PDOException $e) {
+                        print "Error!" . $e->getMessage() . "<br/>";
+                        die();
                     }
+
+                    // Calling functions to print survey results
+                    responseRate($courseID);
+
+                    while ($result = $statemt->fetch(PDO::FETCH_ASSOC)) {
+                        $qtype = $result['q_type'];
+                        $q_idCount++;
+                        if (strcmp($qtype, 'Multiple Choice') == 0) {
+                            multChoiceResults($courseID, $q_idCount);
+                        } else {
+                            essayResults($courseID, $q_idCount);
+                        }
+                    }
+                    $q_idCount = 0;
                 }
                 ?>
             </tbody>
@@ -185,37 +200,37 @@ function essayResults($courseID, $q_id) {
         echo'<td>'.frequency($query).'<td>';
         echo'<td>'.$percent.'%<td>';
         echo'<tr>';
-    ?>
-</tbody>
-</table>
+        ?>
+    </tbody>
+    </table>
 
-<?php
-// Query to get all the text answer from a specific question and course
-try {
-        $dbh = connectDB();
-        $statement = $dbh->query("select results.a_text from survey left outer join results on survey.question_id = results.question_id where q_type = 'Essay' and survey.question_id = '$q_id' and course_id = '$courseID' and a_text is not null and a_text <> ''");
-        $statement->execute();
-        $dbh = null;
-    } catch (PDOException $e) {
-        print "Error!" . $e->getMessage() . "<br/>";
-        die();
-    } 
-    ?>
+    <?php
+    // Query to get all the text answer from a specific question and course
+    try {
+            $dbh = connectDB();
+            $statement = $dbh->query("select results.a_text from survey left outer join results on survey.question_id = results.question_id where q_type = 'Essay' and survey.question_id = '$q_id' and course_id = '$courseID' and a_text is not null and a_text <> ''");
+            $statement->execute();
+            $dbh = null;
+        } catch (PDOException $e) {
+            print "Error!" . $e->getMessage() . "<br/>";
+            die();
+        } 
+        ?>
 
-<!-- Table for the a_text info -->
-<table>
-    <tbody>
-        <?php
-    while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-        echo'<tr>';
-        echo'<td>. '.$row['a_text'].'<td>';
-        echo'<tr>';
-    }
-    ?>
-</tbody>
-</table>
+    <!-- Table for the a_text info -->
+    <table>
+        <tbody>
+            <?php
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+            echo'<tr>';
+            echo'<td>. '.$row['a_text'].'<td>';
+            echo'<tr>';
+        }
+        ?>
+    </tbody>
+    </table>
 
-<?php
+    <?php
 }
 
 function frequency($query) {
