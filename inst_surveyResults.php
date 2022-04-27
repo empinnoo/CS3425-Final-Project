@@ -197,7 +197,7 @@ function essayResults($courseID, $q_id) {
         $percent = floatval(frequency($query)) / floatval($responseRate) * 100;
 
         echo'<tr>';
-        echo'<td>'.frequency($query).'<td>';
+        echo'<td>'.frequency($query).'/'.$responseRate.'<td>';
         echo'<td>'.$percent.'%<td>';
         echo'<tr>';
         ?>
