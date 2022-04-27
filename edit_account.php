@@ -5,11 +5,6 @@ require "db.php";
 <html>
 
 <body>
-    <style>
-        body {
-            margin: auto;
-        }
-    </style>
     <h1>Edit Account</h1>
     <form method=post>
         <div class="username"><input type="text" placeholder="Username" name="username"></div>
@@ -69,12 +64,11 @@ if (isset($_POST['edit']) && isset($_POST['username']) && isset($_POST['oldPassw
 
             if ($step->execute()) {
                 //if successful, shows popup and redirects to login.php
-            ?>
+                ?>
                 <script>
                     alert("New password has been set successfully!")
                 </script>
-
-<?php
+                <?php
                 header("Location: https://classdb.it.mtu.edu/~empinnoo/login.php");
             } else {
                 //print error messages if query could not be performed
@@ -88,34 +82,5 @@ if (isset($_POST['edit']) && isset($_POST['username']) && isset($_POST['oldPassw
         print $e->getMessage();
         die();
     }
-
-
-
-
-
-
-
-
-
-
-    //queries
-    //$stu_edit = "update student set stu_password = :newPassword where stu_name = :username and stu_password = :oldPassword";
-    //$inst_edit = "update instructor set inst_password = :newPassVal where inst_name = :userVal and inst_password = :oldPassVal";
-    //$oldHashedPassword = $_POST['oldPassword'];
-
-    //if user is a student, check student table for matching info then redirect to student view
-    //if ((editAccount($_POST['username'], $_POST['oldPassword'], $_POST['newPassword'], $stu_edit)) == 1) {
-    //    $_SESSION['username'] = $_POST['username'];
-    //    header("LOCATION:stu_registered.php");
-    //    return;
-    //} //if user is instructor, check instuctor table for matching info then redirect to instructor view
-    // if ((editAccount($_POST['username'], $_POST['oldPassword'], $_POST['newPassword'], $inst_edit)) == 1) {
-    //    $_SESSION['username'] = $_POST['username'];
-    //    header("LOCATION:inst_courses.php");
-    //    return;
-    //} //neither username and/or password match data from student nor instructor
-    //else {
-    //    echo '<p style="color:red">Incorrect username and/or old password</p>';
-    //}
 }
 ?>

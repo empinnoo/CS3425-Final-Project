@@ -23,59 +23,39 @@
         }
     }
 
-// Returns the number of rows that match the given username and password. (authenticates the student)
-function authenticateStu($user, $passwd) {
-    try {
-        $dbh = connectDB();
-        $statement = $dbh->prepare("SELECT count(*) FROM student ".   
-                                   "where stu_name = :username and stu_password = sha2(:passwd,256) ");
-        $statement->bindParam(":username", $user);
-        $statement->bindParam(":passwd", $passwd);
-        $result = $statement->execute();
-        $row = $statement->fetch();
-        $dbh = null;
-
-        return $row[0];
-    }catch (PDOException $e) {
-        print "Error!" . $e->getMessage() . "<br/>";
-        die();
-    }
-}
-
-// Returns the number of rows that match the given username and password. (authenticates the instructor)
-function authenticateInst($user, $passwd) {
-    try {
-        $dbh = connectDB();
-        $statement = $dbh->prepare("SELECT count(*) FROM instructor ".   
-                                       "where inst_name = :username and inst_password = sha2(:passwd,256) ");
-        $statement->bindParam(":username", $user);
-        $statement->bindParam(":passwd", $passwd);
-        $result = $statement->execute();
-        $row = $statement->fetch();
-        $dbh = null;
-    
-        return $row[0];
-    }catch (PDOException $e) {
-        print "Error!" . $e->getMessage() . "<br/>";
-        die();
-    }
-}
-
-    /* Connect to database to change login information */
-    function editAccount($username, $oldPassword, $newPassword, $editQuery) {
-        $oldHashedPassword = sha1($oldPassword);
-        $newHashedPassword = sha1($newPassword);
+    // Returns the number of rows that match the given username and password. (authenticates the student)
+    function authenticateStu($user, $passwd) {
         try {
             $dbh = connectDB();
-            $statement = $dbh->prepare($editQuery);
-            $statement->bindParam(":userVal", $username);
-            $statement->bindParam(":oldPassVal", $oldHashedPassword);
-            $statement->bindParam(":newPassVal", $newHashedPassword);
-            $statement->execute();
+            $statement = $dbh->prepare("SELECT count(*) FROM student ".   
+                                    "where stu_name = :username and stu_password = sha2(:passwd,256) ");
+            $statement->bindParam(":username", $user);
+            $statement->bindParam(":passwd", $passwd);
+            $result = $statement->execute();
             $row = $statement->fetch();
-            return $row[0];
             $dbh = null;
-        } catch(PDOException $e) {
+
+            return $row[0];
+        }catch (PDOException $e) {
+            print "Error!" . $e->getMessage() . "<br/>";
+            die();
+        }
+    }
+
+    // Returns the number of rows that match the given username and password. (authenticates the instructor)
+    function authenticateInst($user, $passwd) {
+        try {
+            $dbh = connectDB();
+            $statement = $dbh->prepare("SELECT count(*) FROM instructor ".   
+                                        "where inst_name = :username and inst_password = sha2(:passwd,256) ");
+            $statement->bindParam(":username", $user);
+            $statement->bindParam(":passwd", $passwd);
+            $result = $statement->execute();
+            $row = $statement->fetch();
+            $dbh = null;
+        
+            return $row[0];
+        }catch (PDOException $e) {
             print "Error!" . $e->getMessage() . "<br/>";
             die();
         }

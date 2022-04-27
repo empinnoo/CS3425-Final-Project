@@ -6,11 +6,6 @@ session_start();
 <head>
 
 <body>
-    <style>
-        body {
-            margin: auto;
-        }
-    </style>
     <p>
         <!-- action of login button -->
     <form method=post action=login.php>
