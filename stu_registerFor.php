@@ -66,12 +66,11 @@ if (isset($_POST["markCompleted"])) {
 
         if ($step->execute()) {
             //if successful, shows popup and refresh page
-?>
+            ?>
             <script>
                 alert("Registered course successfully!")
             </script>
-
-<?php
+            <?php
             header("Location: https://classdb.it.mtu.edu/~empinnoo/stu_registerFor.php");
             $dbh = null;
         } else {
